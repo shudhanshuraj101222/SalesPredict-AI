@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="SalesPredict AI sales analytics and forecasting workspace">
+  <title>{% block title %}SalesPredict AI{% endblock %} | SalesPredict AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <a class="brand" href="{{ url_for('web.dashboard') }}"><span class="brand-mark">S</span><span>SalesPredict <b>AI</b></span></a>
+      <span class="nav-caption">WORKSPACE</span>
+      <nav class="nav">
+        <a class="{% if active == 'dashboard' %}active{% endif %}" href="{{ url_for('web.dashboard') }}"><span>▦</span> Dashboard</a>
+        <a class="{% if active == 'forecast' %}active{% endif %}" href="{{ url_for('web.forecast_page') }}"><span>⌁</span> Sales prediction</a>
+        <a class="{% if active == 'sales' %}active{% endif %}" href="{{ url_for('web.records') }}"><span>▤</span> Sales data</a>
+        <a class="{% if active == 'analytics' %}active{% endif %}" href="{{ url_for('web.analytics') }}"><span>◫</span> Analytics</a>
+        <a class="{% if active == 'history' %}active{% endif %}" href="{{ url_for('web.history') }}"><span>◷</span> Forecast history</a>
+        <a class="{% if active == 'performance' %}active{% endif %}" href="{{ url_for('web.performance') }}"><span>⌗</span> Model performance</a>
+        <a class="{% if active == 'reports' %}active{% endif %}" href="{{ url_for('web.reports') }}"><span>▧</span> Reports</a>
+      </nav>
+      <div class="sidebar-note">
+        <span class="status-dot"></span>
+        <div><strong>Local workspace</strong><small>Your data stays in SQLite</small></div>
+      </div>
+      <div class="sidebar-footer">SALES ANALYTICS · V1.0</div>
+    </aside>
+    <main class="main">
+      <header class="topbar"><div><span class="crumb">Workspace</span><span class="slash">/</span><strong>{% block breadcrumb %}Dashboard{% endblock %}</strong></div><span class="top-label">SALES INTELLIGENCE</span></header>
+      <section class="content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}<div class="alerts">{% for category, message in messages %}<div class="alert {{ category }}" role="status">{{ message }}</div>{% endfor %}</div>{% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+      </section>
+      <footer class="footer">SalesPredict AI <span>·</span> Forecasts are estimates, not guarantees.</footer>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block title %}{% if sale %}Edit sale{% else %}Add sale{% endif %}{% endblock %}{% block breadcrumb %}<a href="{{ url_for('web.records') }}">Sales data</a> / {% if sale %}Edit{% else %}Add{% endif %}{% endblock %}
+{% block content %}<div class="page-head"><div><div class="eyebrow">SALES DATA</div><h1>{% if sale %}Edit record{% else %}Add a sale{% endif %}</h1><p>Enter a transaction to keep your analysis grounded in real data.</p></div></div>
+<article class="card form-card"><form method="post" class="form-grid">
+<label>Sale date<input type="date" name="sale_date" required value="{{ request.form.get('sale_date', sale.sale_date if sale else '') }}"></label>
+<label>Product name<input name="product" maxlength="120" required value="{{ request.form.get('product', sale.product if sale else '') }}" placeholder="e.g. Wireless headphones"></label>
+<label>Category <span class="optional">(optional)</span><input name="category" maxlength="100" value="{{ request.form.get('category', sale.category if sale else '') }}" placeholder="e.g. Electronics"></label>
+<label>Quantity<input type="number" name="quantity" min="1" max="1000000" step="1" required value="{{ request.form.get('quantity', sale.quantity if sale else '') }}"></label>
+<label>Unit price<input type="number" name="unit_price" min="0" max="1000000000" step="0.01" required value="{{ request.form.get('unit_price', sale.unit_price if sale else '') }}"></label>
+<div class="form-actions"><button class="button primary" type="submit">Save record</button><a class="button quiet" href="{{ url_for('web.records') }}">Cancel</a></div>
+</form></article>{% endblock %}

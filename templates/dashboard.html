@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><div class="eyebrow">BUSINESS OVERVIEW</div><h1>Dashboard</h1><p>Track sales performance and make informed decisions.</p></div>
+  <a class="button primary" href="{{ url_for('web.forecast_page') }}">＋ New forecast</a>
+</div>
+<form class="filter-bar" method="get">
+  <label>From <input type="date" name="start" value="{{ start }}"></label><label>To <input type="date" name="end" value="{{ end }}"></label>
+  <button class="button secondary" type="submit">Apply dates</button><a class="button quiet" href="{{ url_for('web.dashboard') }}">Clear</a>
+</form>
+<div class="metric-grid">
+  <article class="metric"><span class="metric-label">TOTAL SALES</span><strong>{{ "%.2f"|format(summary.total) }}</strong><small>Across {{ summary.count }} recorded transactions</small></article>
+  <article class="metric"><span class="metric-label">AVERAGE SALE</span><strong>{{ "%.2f"|format(summary.average) }}</strong><small>Average revenue per record</small></article>
+  <article class="metric"><span class="metric-label">LATEST FORECAST</span><strong>{% if latest_forecast is not none %}{{ "%.2f"|format(latest_forecast) }}{% else %}—{% endif %}</strong><small>{% if latest_forecast is not none %}Latest saved forecast total{% else %}Create a forecast to see a projection{% endif %}</small></article>
+  <article class="metric"><span class="metric-label">MONTHLY GROWTH</span><strong>{% if summary.growth is not none %}{{ "%+.1f"|format(summary.growth) }}%{% else %}—{% endif %}</strong><small>{% if summary.growth is not none %}Compared with previous available month{% else %}Requires two months of sales data{% endif %}</small></article>
+</div>
+<div class="grid-two">
+  <article class="card"><div class="card-head"><div><h2>Monthly sales</h2><p>Revenue from your recorded transactions</p></div><span class="tag">ACTUAL</span></div>
+    {% if summary.months %}<div class="chart-container"><canvas id="monthly-chart" aria-label="Monthly sales chart"></canvas></div>{% else %}<div class="empty">No sales records yet. Add or import your history to populate this chart.</div>{% endif %}
+  </article>
+  <article class="card"><div class="card-head"><div><h2>Top products</h2><p>Ranked by recorded sales revenue</p></div></div>
+    {% if summary.products %}<div class="chart-container"><canvas id="products-chart" aria-label="Top products chart"></canvas></div>{% else %}<div class="empty">Product rankings will appear when sales data is available.</div>{% endif %}
+  </article>
+</div>
+<article class="card table-card"><div class="card-head"><div><h2>Recent sales</h2><p>Latest entries in your data</p></div><a class="text-link" href="{{ url_for('web.records') }}">All records →</a></div>
+  {% if records %}<div class="table-scroll"><table><thead><tr><th>Date</th><th>Product</th><th>Category</th><th>Quantity</th><th>Revenue</th></tr></thead><tbody>
+  {% for row in records %}<tr><td>{{ row.sale_date }}</td><td class="strong">{{ row.product }}</td><td>{{ row.category or "—" }}</td><td>{{ row.quantity }}</td><td>{{ "%.2f"|format(row.quantity * row.unit_price) }}</td></tr>{% endfor %}
+  </tbody></table></div>{% else %}<div class="empty">No sales records have been added. <a href="{{ url_for('web.sale_form') }}">Add your first record</a>.</div>{% endif %}
+</article>
+{% if summary.months %}<script>window.salesPredictCharts={monthly:{{ summary.months|tojson }},products:{{ summary.products|tojson }}};</script>{% endif %}
+{% endblock %}

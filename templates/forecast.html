@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% block title %}Sales prediction{% endblock %}{% block breadcrumb %}Sales prediction{% endblock %}
+{% block content %}<div class="page-head"><div><div class="eyebrow">FORWARD LOOKING</div><h1>Sales prediction</h1><p>Fit a time-aware linear model to your daily historical revenue.</p></div></div>
+<div class="grid-two forecast-layout"><article class="card"><div class="card-head"><div><h2>Forecast settings</h2><p>Requires at least three calendar days of recorded sales.</p></div></div>
+<form method="post" class="form-stack"><label>Forecast start date<input type="date" name="start_date" min="{{ default_start }}" required value="{{ request.form.get('start_date', default_start) }}"></label>
+<label>Forecast horizon<select name="periods">{% for value in [7, 14, 30, 60, 90] %}<option value="{{ value }}" {% if request.form.get('periods', '7')|int == value %}selected{% endif %}>{{ value }} days</option>{% endfor %}</select></label>
+<button class="button primary" type="submit">Generate prediction</button></form>
+<p class="help">Forecast quality depends on the amount, consistency, and quality of your historical data. Estimates are clipped at zero and should not be treated as guaranteed sales.</p>
+</article>
+<article class="card">{% if result %}<div class="card-head"><div><h2>Forecast result</h2><p>{{ result.start_date }} · {{ result.periods }} days · {{ result.model_name }}</p></div><span class="tag">SAVED</span></div><div class="result-total">{{ "%.2f"|format(result.total) }}<small>estimated total revenue</small></div><div class="chart-container"><canvas id="forecast-chart" aria-label="Predicted daily revenue"></canvas></div>
+<p class="help">{{ result.evaluation.message if result.evaluation.available else result.evaluation.message }}</p><script>window.salesPredictCharts={forecast:{{ result.predictions|tojson }}};</script>
+{% else %}<div class="empty large-empty"><strong>Ready when you are</strong><br>Choose a horizon and date to generate a forecast from saved sales records. No prediction is generated without historical data.</div>{% endif %}</article></div>{% endblock %}

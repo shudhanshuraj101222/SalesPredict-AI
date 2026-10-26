@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Sales data{% endblock %}{% block breadcrumb %}Sales data{% endblock %}
+{% block content %}
+<div class="page-head"><div><div class="eyebrow">YOUR BUSINESS DATA</div><h1>Sales records</h1><p>Add, review, and manage recorded sales.</p></div><a class="button primary" href="{{ url_for('web.sale_form') }}">＋ Add sale</a></div>
+<article class="card import-card"><div><h2>Import from CSV</h2><p>Required headers: <code>sale_date, product, quantity, unit_price</code>. Optional: <code>category</code>.</p></div>
+<form method="post" action="{{ url_for('web.import_csv') }}" enctype="multipart/form-data" class="upload-form"><input type="file" name="file" accept=".csv,text/csv" required><button class="button secondary">Upload CSV</button></form></article>
+<form class="filter-bar" method="get"><input type="search" name="q" value="{{ q }}" placeholder="Search product or category" aria-label="Search records">
+  <label>From <input type="date" name="start" value="{{ start }}"></label><label>To <input type="date" name="end" value="{{ end }}"></label>
+  <button class="button secondary">Filter</button><a class="button quiet" href="{{ url_for('web.records') }}">Clear</a></form>
+<article class="card table-card"><div class="card-head"><div><h2>Sales data</h2><p>{{ total }} matching record(s)</p></div></div>
+{% if records %}<div class="table-scroll"><table data-sortable><thead><tr><th><button class="sort-button" type="button" data-sort="text">Date ↕</button></th><th><button class="sort-button" type="button" data-sort="text">Product ↕</button></th><th><button class="sort-button" type="button" data-sort="text">Category ↕</button></th><th><button class="sort-button" type="button" data-sort="number">Quantity ↕</button></th><th><button class="sort-button" type="button" data-sort="number">Unit price ↕</button></th><th><button class="sort-button" type="button" data-sort="number">Revenue ↕</button></th><th>Actions</th></tr></thead><tbody>
+{% for row in records %}<tr><td>{{ row.sale_date }}</td><td class="strong">{{ row.product }}</td><td>{{ row.category or "—" }}</td><td>{{ row.quantity }}</td><td>{{ "%.2f"|format(row.unit_price) }}</td><td>{{ "%.2f"|format(row.quantity * row.unit_price) }}</td><td class="actions"><a href="{{ url_for('web.view_sale', sale_id=row.id) }}">View</a><a href="{{ url_for('web.sale_form', sale_id=row.id) }}">Edit</a><form method="post" action="{{ url_for('web.delete_sale_route', sale_id=row.id) }}" data-confirm="Delete this sales record?"><button class="link-danger">Delete</button></form></td></tr>{% endfor %}
+</tbody></table></div><div class="pagination"><span>Page {{ page }} of {{ pages }}</span><div>{% if page > 1 %}<a class="button quiet" href="{{ url_for('web.records', page=page-1, q=q, start=start, end=end) }}">Previous</a>{% endif %}{% if page < pages %}<a class="button quiet" href="{{ url_for('web.records', page=page+1, q=q, start=start, end=end) }}">Next</a>{% endif %}</div></div>
+{% else %}<div class="empty">No records match these filters. Add a sale or import a CSV file.</div>{% endif %}
+</article>
+{% endblock %}

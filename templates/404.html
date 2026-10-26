@@ -1,0 +1,2 @@
+{% extends "base.html" %}{% block title %}Not found{% endblock %}
+{% block content %}<article class="card empty large-empty"><strong>That page or record was not found.</strong><p>It may have been removed or the address may be incorrect.</p><a class="button primary" href="{{ url_for('web.dashboard') }}">Back to dashboard</a></article>{% endblock %}

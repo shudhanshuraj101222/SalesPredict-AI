@@ -1,0 +1,5 @@
+{% extends "base.html" %}{% block title %}Forecast details{% endblock %}{% block breadcrumb %}<a href="{{ url_for('web.history') }}">Forecast history</a> / Details{% endblock %}
+{% block content %}<div class="page-head"><div><div class="eyebrow">FORECAST #{{ forecast.id }}</div><h1>Forecast details</h1><p>{{ forecast.model_name }} · generated {{ forecast.created_at }}</p></div></div>
+<article class="card"><div class="card-head"><div><h2>{{ forecast.periods }}-day revenue forecast</h2><p>Start date: {{ forecast.start_date }}</p></div><span class="tag">TOTAL {{ "%.2f"|format(forecast.predicted_total) }}</span></div>
+<div class="table-scroll"><table><thead><tr><th>Date</th><th>Predicted revenue</th></tr></thead><tbody>{% for item in forecast.predictions %}<tr><td>{{ item.date }}</td><td>{{ "%.2f"|format(item.revenue) }}</td></tr>{% endfor %}</tbody></table></div>
+<p class="help">Actual comparison: {% if forecast.actual_total is not none %}{{ "%.2f"|format(forecast.actual_total) }}{% else %}not available yet. Actual totals are not inferred from incomplete periods.{% endif %}</p></article>{% endblock %}
